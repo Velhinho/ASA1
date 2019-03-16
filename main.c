@@ -4,14 +4,15 @@
 #define FALSE 0
 
 
-void getInput(int* n, list* list);
-void dfs_visit(int i, List list, int subtree, int* subtree_ids, int low,
+int min(int a, int b);
+void getInput(int* n, List** list);
+void dfs_visit(int u, List list, int subtree, int* subtree_ids, int low,
 	int* n_lows, Stack scc, int* on_stack, int* is_art);
 
 
 int main(){
 	int n;
-	List list;
+	List list[];					/* list[i] adjacency list of vertex i */
 
 	getInput(&n, &list);
 
@@ -35,13 +36,58 @@ int main(){
 
 	initStack(scc);
 
-	/* Iterate over non-visted vertices */
+	/* iterate over non-visted vertices */
 	for(i = 0; i < n; i++){
 		if(!visted[i]){
-			subtree++; dfs_visit(i, list, subtree, subtree_ids, low,
+			subtree++; dfs_visit(i, list[i], subtree, subtree_ids, low,
 				n_lows, scc, on_stack, is_art);
 		}
 	}
 
 	/* FIXME use gathered data */
+}
+
+
+void dfs_visit(int u, List list, int subtree, int* subtree_ids, int low,
+	int* n_lows, Stack scc, int* on_stack, int* is_art){
+
+	int v, w, i;
+	visted[u] = TRUE;
+	low[u] = u;
+	pushStack(scc, u);
+	on_stack[u] = TRUE;
+
+	/* for each adjacent vertex of u */
+	for(i = 0, v = getList(list, i); v != NULL; v = getList(list, ++i)){
+		if(!visted[v]){
+			dfs_visit(v, list, subtree, subtree_ids, low,
+				n_lows, scc, on_stack, is_art);
+		}
+
+		if(on_stack[v]){
+			low[u] = min(low[v], low[u]);
+		}
+	}
+
+	if(u == low[u]){						/* if u is root of a SCC */
+		while(TRUE){
+			w = popStack(scc);
+			on_stack[w] = FALSE;
+			low[w] = low[u];				/* set the lows of found SCC */
+			n_lows[low[u]] += 1;		/* increment number of vertices with that low */
+
+			if(w == u){							/* if it's the root of the SCC */
+				if(getLength(list) > 1){ /* and has more then 1 edge */
+					is_art[u] = TRUE;		/* then it's an articulation point */
+				}
+				break;
+			}
+		}
+	}
+}
+
+
+int min(int a, int b){
+	if(a < b) return a;
+	return b;
 }

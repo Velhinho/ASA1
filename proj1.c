@@ -8,7 +8,6 @@
 
 typedef list_t List;
 
-int min(int a, int b);
 void getInput(int* n, List** list);
 void dfs_visit(int u, List list, int subtree, int* subtree_ids, int* low,
 	int* n_lows, Stack scc, int* on_stack, int* is_art);
@@ -59,7 +58,7 @@ void dfs_visit(int u, List list, int subtree, int* subtree_ids, int* low,
 	int* n_lows, Stack scc, int* on_stack, int* is_art){
 
 	int v, w, i;
-	subtree_ids[subtree] = max(u, subtree_ids[subtree]);
+	subtree_ids[subtree] = MAX(u, subtree_ids[subtree]);
 	visted[u] = TRUE;
 	low[u] = u;
 	pushStack(u, scc);
@@ -73,7 +72,7 @@ void dfs_visit(int u, List list, int subtree, int* subtree_ids, int* low,
 		}
 
 		if(on_stack[v]){
-			low[u] = min(low[v], low[u]);
+			low[u] = MIN(low[v], low[u]);
 		}
 	}
 

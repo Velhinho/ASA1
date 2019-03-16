@@ -1,23 +1,21 @@
 #ifndef LIST
 #define LIST
 
+typedef struct Node {
+	int vertex;
+	struct Node* next;
+} node_t;
 
-typedef struct nodesList
-{
-	int verticeId;
-	struct nodesList* nextNode;
-}nodesList_t;
-
-typedef nodesList_t* list_iter_t;
-
-typedef struct list{
-	nodesList_t head;
+typedef struct List{
 	int size;
-}list_t;
+	node_t* start;
+	node_t* end;
+} list_t;
 
-void list_iter_reset( list_iter_t* pIter, list_t* pList);
-nodesList_t* list_insert (nodesList_t* pList, int v);
-int get_length (list_t* pList);
-
+void initList(list_t* list);
+void freeList(list_t* list);
+void addList(list_t* list, int vertex);
+int getList(list_t* list, int n);
+int removeList(list_t* list, int n);
 
 #endif

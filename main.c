@@ -5,9 +5,6 @@
 #define TRUE 1
 #define FALSE 0
 
-typedef list_t List;
-typedef struct stack Stack;
-
 
 int min(int a, int b);
 void getInput(int* n, List** list);
@@ -18,6 +15,7 @@ void dfs_visit(int u, List list, int subtree, int* subtree_ids, int* low,
 int main(){
 	int n;
 	List* list;					/* list[i] adjacency list of vertex i */
+
 
 	getInput(&n, &list);
 
@@ -62,7 +60,7 @@ void dfs_visit(int u, List list, int subtree, int* subtree_ids, int* low,
 	subtree_ids[subtree] = max(u, subtree_ids[subtree]);
 	visted[u] = TRUE;
 	low[u] = u;
-	pushStack(scc, u);
+	pushStack(u, scc);
 	on_stack[u] = TRUE;
 
 	/* for each adjacent vertex of u */

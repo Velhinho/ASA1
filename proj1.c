@@ -1,7 +1,8 @@
 #include "list.h"
 #include "stack.h"
 #include <stdio.h>
-
+#define MIN(a,b) ((a) < (b) ? a:b)
+#define MAX(a,b) ((a) > (b) ? a:b)
 #define TRUE 1
 #define FALSE 0
 
@@ -111,15 +112,4 @@ void getInput(int* n, List** l){
     }
 
 
-}
-
-
-int max(int a, int b){
-	if(a > b) return a;
-	return b;
-}
-
-int min(int a, int b){
-	if(a < b) return a;
-	return b;
 }

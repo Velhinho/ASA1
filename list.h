@@ -17,7 +17,7 @@ typedef struct list{
 
 void list_iter_reset( list_iter_t* pIter, list_t* pList);
 nodesList_t* list_insert (nodesList_t* pList, int v);
-int get_lenght (list_t* pList);
+int get_length (list_t* pList);
 
 
 #endif

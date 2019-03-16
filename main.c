@@ -1,7 +1,12 @@
+#include "list.h"
+#include "stack.h"
 #include <stdin.h>
 
 #define TRUE 1
 #define FALSE 0
+
+typedef list_t List;
+typdef struct stack Stack;
 
 
 int min(int a, int b);
@@ -39,7 +44,8 @@ int main(){
 	/* iterate over non-visted vertices */
 	for(i = 0; i < n; i++){
 		if(!visted[i]){
-			subtree++; dfs_visit(i, list[i], subtree, subtree_ids, low,
+			subtree++;
+			dfs_visit(i, list[i], subtree, subtree_ids, low,
 				n_lows, scc, on_stack, is_art);
 		}
 	}
@@ -52,6 +58,7 @@ void dfs_visit(int u, List list, int subtree, int* subtree_ids, int low,
 	int* n_lows, Stack scc, int* on_stack, int* is_art){
 
 	int v, w, i;
+	subtree_ids[subtree] = max(u, subtree_ids[subtree]);
 	visted[u] = TRUE;
 	low[u] = u;
 	pushStack(scc, u);
@@ -86,6 +93,11 @@ void dfs_visit(int u, List list, int subtree, int* subtree_ids, int low,
 	}
 }
 
+
+int max(int a, int b){
+	if(a > b) return a;
+	return b;
+}
 
 int min(int a, int b){
 	if(a < b) return a;

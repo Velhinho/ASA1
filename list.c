@@ -11,7 +11,7 @@ nodesList_t* list_insert(nodesList_t* pList, int v){
 	newNode->nextNode = pList;
 	return newNode;
 }
-int get_lenght(list_t* pList){
+int get_length(list_t* pList){
 
 	return pList->size;
 

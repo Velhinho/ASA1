@@ -1,23 +1,23 @@
 #include "list.h"
 #include "stack.h"
-#include <stdin.h>
+#include <stdio.h>
 
 #define TRUE 1
 #define FALSE 0
 
 typedef list_t List;
-typdef struct stack Stack;
+typedef struct stack Stack;
 
 
 int min(int a, int b);
 void getInput(int* n, List** list);
-void dfs_visit(int u, List list, int subtree, int* subtree_ids, int low,
+void dfs_visit(int u, List list, int subtree, int* subtree_ids, int* low,
 	int* n_lows, Stack scc, int* on_stack, int* is_art);
 
 
 int main(){
 	int n;
-	List list[];					/* list[i] adjacency list of vertex i */
+	List* list;					/* list[i] adjacency list of vertex i */
 
 	getInput(&n, &list);
 
@@ -34,9 +34,9 @@ int main(){
 		visited[i] = FALSE;
 		subtree_ids[i] = 0;
 		low[i] = 0;
-		n_lows = 0;
-		on_stack = FALSE;
-		is_art = FALSE;
+		n_lows[i] = 0;
+		on_stack[i] = FALSE;
+		is_art[i] = FALSE;
 	}
 
 	initStack(scc);
@@ -50,11 +50,12 @@ int main(){
 		}
 	}
 
+	return 0;
 	/* FIXME use gathered data */
 }
 
 
-void dfs_visit(int u, List list, int subtree, int* subtree_ids, int low,
+void dfs_visit(int u, List list, int subtree, int* subtree_ids, int* low,
 	int* n_lows, Stack scc, int* on_stack, int* is_art){
 
 	int v, w, i;

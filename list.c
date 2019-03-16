@@ -1,14 +1,17 @@
 #include "list.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 
-void initList(list_t* listPtr){
+list_t* initList(){
 
-	listPtr = (list_t*)malloc(sizeof(list_t));
+	list_t* listPtr = (list_t*)malloc(sizeof(list_t));
 
 	listPtr->size = 0;
 	listPtr->start = NULL;
 	listPtr->end = NULL;
+
+	return listPtr;
 }
 
 
@@ -33,13 +36,14 @@ int getSizeList(list_t* list){
 
 void addList(list_t* list, int vertex){
 
+
 	node_t* node = (node_t*)malloc(sizeof(node_t));
 	node->vertex = vertex;
 	node->next = NULL;
 	list->size++;
 
 	/* If the list is empty */
-	if(!(list->start)){
+	if(list->start == NULL){
 		list->start = node;
 		list->end = node;
 	}

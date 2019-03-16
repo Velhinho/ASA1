@@ -1,16 +1,15 @@
 #include "stack.h"
 #include <stdlib.h>
 
-typedef list_t stack_t;
+stack_t* initStack(){
 
-
-void initStack(stack_t* stackPtr){
-
-	stackPtr = (stack_t*)malloc(sizeof(stack_t));
+	stack_t* stackPtr = (stack_t*)malloc(sizeof(stack_t));
 
 	stackPtr->size = 0;
 	stackPtr->start = NULL;
 	stackPtr->end = NULL;
+
+	return stackPtr;
 }
 
 

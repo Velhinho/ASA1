@@ -12,7 +12,7 @@ typedef struct List{
 	node_t* end;
 } list_t;
 
-void initList(list_t* list);
+list_t* initList();
 void freeList(list_t* list);
 int getSizeList(list_t* list);
 void addList(list_t* list, int vertex);

@@ -3,9 +3,11 @@
 
 #include "list.h"
 
-void initStack(list_t* stack);
-void freeStack(list_t* stack);
-void pushStack(list_t* stack, int vertex);
-int popStack(list_t* stack);
+typedef list_t stack_t;
+
+stack_t* initStack();
+void freeStack(stack_t* stack);
+void pushStack(stack_t* stack, int vertex);
+int popStack(stack_t* stack);
 
 #endif

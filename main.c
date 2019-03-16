@@ -5,6 +5,7 @@
 #define TRUE 1
 #define FALSE 0
 
+typedef list_t List;
 
 int min(int a, int b);
 void getInput(int* n, List** list);

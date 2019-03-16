@@ -26,6 +26,11 @@ void freeList(list_t* list){
 }
 
 
+int getSizeList(list_t* list){
+	return list->size;
+}
+
+
 void addList(list_t* list, int vertex){
 
 	node_t* node = (node_t*)malloc(sizeof(node_t));

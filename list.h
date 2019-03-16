@@ -14,6 +14,7 @@ typedef struct List{
 
 void initList(list_t* list);
 void freeList(list_t* list);
+int getSizeList(list_t* list);
 void addList(list_t* list, int vertex);
 int getList(list_t* list, int n);
 int removeList(list_t* list, int n);

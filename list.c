@@ -26,7 +26,7 @@ void freeList(list_t* list){
 }
 
 
-void addVertexList(list_t* list, int vertex){
+void addList(list_t* list, int vertex){
 
 	node_t* node = (node_t*)malloc(sizeof(node_t));
 	node->vertex = vertex;
@@ -46,7 +46,7 @@ void addVertexList(list_t* list, int vertex){
 }
 
 
-int getVertexList(list_t* list, int n){
+int getList(list_t* list, int n){
 /* Returns -1 if list too small or empty */
 
 	node_t* node = list->start;
@@ -62,7 +62,7 @@ int getVertexList(list_t* list, int n){
 	return node->vertex;
 }
 
-int removeVertexList(list_t* list, int n){
+int removeList(list_t* list, int n){
 	/* Return 1 if success, 0 otherwise */
 
 	node_t* previous = list->start;

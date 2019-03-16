@@ -14,7 +14,7 @@ void dfs_visit(int u, List list, int subtree, int* subtree_ids, int* low,
 
 
 int main(){
-	int n;
+	int n, i;
 	List* list;					/* list[i] adjacency list of vertex i */
 
 
@@ -29,7 +29,7 @@ int main(){
 	int on_stack[n];
 	int is_art[n];				/* is articulation point */
 
-	for(int i = 0; i < n; i++){
+	for(i = 0; i < n; i++){
 		visited[i] = FALSE;
 		subtree_ids[i] = 0;
 		low[i] = 0;
@@ -40,9 +40,9 @@ int main(){
 
 	initStack(scc);
 
-	/* iterate over non-visted vertices */
+	/* iterate over non-visited vertices */
 	for(i = 0; i < n; i++){
-		if(!visted[i]){
+		if(!visited[i]){
 			subtree++;
 			dfs_visit(i, list[i], subtree, subtree_ids, low,
 				n_lows, scc, on_stack, is_art);
@@ -59,14 +59,14 @@ void dfs_visit(int u, List list, int subtree, int* subtree_ids, int* low,
 
 	int v, w, i;
 	subtree_ids[subtree] = max(u, subtree_ids[subtree]);
-	visted[u] = TRUE;
+	visited[u] = TRUE;
 	low[u] = u;
 	pushStack(u, scc);
 	on_stack[u] = TRUE;
 
 	/* for each adjacent vertex of u */
 	for(i = 0, v = getList(list, i); v != NULL; v = getList(list, ++i)){
-		if(!visted[v]){
+		if(!visited[v]){
 			dfs_visit(v, list, subtree, subtree_ids, low,
 				n_lows, scc, on_stack, is_art);
 		}

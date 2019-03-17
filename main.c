@@ -1,115 +1,196 @@
-#include "list.h"
-#include "stack.h"
+#include <assert.h>
+#include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
-#define TRUE 1
-#define FALSE 0
+#define INFINITY -1
+#define TIME 0
+#define D    1
+#define LOW  2
+#define PI   3
+#define AP_COUNT 0
+#define MAX_AP   1
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define MAX(a, b) ((a) < (b) ? (b) : (a))
 
-#define MIN(a,b) ((a) < (b) ? a:b)
-#define MAX(a,b) ((a) > (b) ? a:b)
+typedef int  graph_vertex_t;
 
-void getInput(int n, list_t** list);
-void dfs_visit(int u, list_t* list, int* visited, int subtree, int* subtree_ids, int* low,
-	int* n_lows, stack_t* scc, int* on_stack, int* is_art);
+typedef struct _graph_node graph_node_t;
 
+typedef struct _graph      graph_t;
 
-int main(){
-	int n, i;
+struct _graph_node {
+  graph_vertex_t vertex;
+  graph_node_t *next;
+};
 
-	scanf("%d", &n);
-	list_t* list[n];					/* list[i] adjacency list of vertex i */
-
-	getInput(n, list);
-
-	int visited[n];
-	int subtree = 1;			/* current subtree */
-	int subtree_ids[n];		/* subtree_ids[i] has the vertex of the i'th subtree */
-	int low[n];						/* vertices with the same low are in the same SCC */
-	int n_lows[n];				/* n_lows[i] has number of vertices with the low i */
-	stack_t* scc;
-	int on_stack[n];
-	int is_art[n];				/* is articulation point */
+struct _graph {
+  int V, E, nC;
+  graph_node_t **adjlist;
+};
 
 
-	for(i = 0; i < n; i++){
-		visited[i] = FALSE;
-		subtree_ids[i] = 0;
-		low[i] = 0;
-		n_lows[i] = 0;
-		on_stack[i] = FALSE;
-		is_art[i] = FALSE;
-		printf("asd\n");
-	}
+//HARDCODED. HAVE TO WORK ON THIS, OR MAYBE NOT!
+int worseThanSex[10];
 
-	scc = initStack();
 
-	/* iterate over non-visited vertices */
-	for(i = 0; i < n; i++){
-		if(!visited[i]){
-			subtree++;
-			dfs_visit(i, list[i], visited, subtree, subtree_ids, low,
-				n_lows, scc, on_stack, is_art);
-		}
-	}
+graph_t *graph_new(int V) {
+  graph_t *graph = NULL;
+  
+  if(V > 0 && (graph = (graph_t*)malloc(sizeof(struct _graph))) != NULL) {
+    graph->V = V;
+    graph->E = 0;
+    graph->nC = 0;
+    graph->adjlist = (graph_node_t**)malloc(V * sizeof(struct _graph_node*));
+  }
+  
+  return graph;
+}
 
-	return 0;
-	/* FIXME use gathered data */
+void graph_free(graph_t *graph) {
+  int i; 
+  for(i = 0; i < graph->V; ++i) {
+    graph_node_t *head = graph->adjlist[i];
+    while(head != NULL) {
+      graph_node_t *temp = head;
+      head = head->next;
+      free(temp);
+    }
+  }
+  free(graph->adjlist);
+  free(graph);
+}
+
+void graph_add_edge(graph_t *graph, graph_vertex_t u, graph_vertex_t v) {
+  if((u > 0 && u <= graph->V) && (v > 0 && v <= graph->V)) {
+    graph_node_t *w = (graph_node_t*)malloc(sizeof(struct _graph_node));
+    graph_node_t *x = (graph_node_t*)malloc(sizeof(struct _graph_node));
+
+    if(w != NULL && x != NULL) {
+      w->vertex = u;
+      x->vertex = v;
+      w->next = graph->adjlist[v - 1];
+      x->next = graph->adjlist[u - 1];
+      
+      graph->adjlist[v - 1] = w;
+      graph->adjlist[u - 1] = x;
+    }
+    else {
+      exit(EXIT_FAILURE);
+    }
+    
+    graph->E++;
+  }
 }
 
 
-void dfs_visit(int u, list_t* list, int* visited, int subtree, int* subtree_ids, int* low,
-	int* n_lows, stack_t* scc, int* on_stack, int* is_art){
+void DFS_Tarjan(graph_t *graph, graph_vertex_t u, int **lista, int ap_data[2]) {
+  graph_node_t *node = graph->adjlist[u - 1];
+  graph_vertex_t adj;
+  bool isArticulationPoint = false;
+  int childCount = 0;
+  
+  lista[D][u - 1] = lista[TIME][0];
+  lista[LOW][u - 1] = lista[TIME][0];
+  ++lista[TIME][0];
+  worseThanSex[graph->nC] = MAX(worseThanSex[graph->nC],u);
 
-	int v, w, i;
-	subtree_ids[subtree] = MAX(u, subtree_ids[subtree]);
-	visited[u] = TRUE;
-	low[u] = u;
-	pushStack(scc, u);
-	on_stack[u] = TRUE;
+  while(node != NULL) {
+    adj = node->vertex;
+    printf("%d\t%d\n", worseThanSex[graph->nC],u);
 
-	/* for each adjacent vertex of u */
-	for(i = 0, v = getList(list, i); v != -1; v = getList(list, ++i)){
-		if(!visited[v]){
-			dfs_visit(v, list, visited, subtree, subtree_ids, low,
-				n_lows, scc, on_stack, is_art);
-		}
+    if(lista[D][adj - 1] == INFINITY) {
+      lista[PI][adj - 1] = u;
+      ++childCount;
+      DFS_Tarjan(graph, adj, lista, ap_data);
 
-		if(on_stack[v]){
-			low[u] = MIN(low[v], low[u]);
-		}
-	}
+      if(lista[D][u - 1] <= lista[LOW][adj - 1]) {
+        isArticulationPoint = true;
+      }
+      else {
+        lista[LOW][u - 1] = MIN(lista[LOW][u - 1], lista[LOW][adj - 1]);
+      }
+    }
 
-	if(u == low[u]){						/* if u is root of a SCC */
-		while(TRUE){
-			w = popStack(scc);
-			on_stack[w] = FALSE;
-			low[w] = low[u];				/* set the lows of found SCC */
-			n_lows[low[u]] += 1;		/* increment number of vertices with that low */
+    else if(adj != lista[PI][u - 1]) {
+      lista[LOW][u - 1] = MIN(lista[LOW][u - 1], lista[D][adj - 1]);
+    }
+    node = node->next;
+  }
 
-			if(w == u){							/* if it's the root of the SCC */
-				if(getSizeList(list) > 1){ /* and has more then 1 edge */
-					is_art[u] = TRUE;		/* then it's an articulation point */
-				}
-				break;
-			}
-		}
-	}
+  //check if cut vertex!
+  if((lista[PI][u - 1] == INFINITY && childCount > 1) || (lista[PI][u - 1] != INFINITY && isArticulationPoint)) {
+    ++ap_data[AP_COUNT]; 
+    if(ap_data[MAX_AP] == INFINITY){
+      ap_data[MAX_AP] = u;
+    }
+    else {
+      ap_data[MAX_AP] = MAX(ap_data[MAX_AP], u);
+    }
+  }
 }
 
 
-void getInput(int n, list_t** l){
-    int e, o, d, i;
+void CV_Tarjan(graph_t *graph, int ap_data[2]) {
+  int **lista, i;
 
-    scanf("%d", &e);
+  ap_data[AP_COUNT] = 0;
+  ap_data[MAX_AP] = INFINITY;
 
-    for(i = 0 ; i < n; i++){                         //O(V)
-        l[i] = initList();
+  lista = (int**)malloc(4 * sizeof(int*));
+  if(lista != NULL) {
+    lista[TIME] = (int*)malloc(sizeof(int));
+    lista[D] = (int*)malloc(graph->V * sizeof(int));
+    lista[LOW] = (int*)malloc(graph->V * sizeof(int));
+    lista[PI] = (int*)malloc(graph->V * sizeof(int));
+  }
+
+  lista[TIME][0] = 0;
+  for(i = 0; i < graph->V; i++) {
+    lista[D][i] = INFINITY;
+    lista[PI][i] = INFINITY;
+  }
+
+  for(i=0; i<graph->V;i++){
+    if(lista[D][i++] == INFINITY){
+      graph->nC++;
+      worseThanSex[graph->nC] = 1;
+      DFS_Tarjan(graph, i, lista, ap_data);
     }
+  }
 
-    for(i = 0; i < e; i++){                         //O(E)
-        scanf("%d %d", &o, &d);
-				o--; d--;
-        addList(l[o], d);
-        addList(l[d], o);
-    }
+  free(lista[TIME]);
+  free(lista[D]);
+  free(lista[LOW]);
+  free(lista[PI]);
+  free(lista);
+}
+
+int main() {
+  int V, E, i, origem, destino;
+  int ap_data[3];
+  graph_t *graph;
+  
+  scanf("%d", &V);
+  scanf("%d", &E);
+  graph = graph_new(V);
+
+  int list[V];
+
+  for(i=0;i<E;i++){
+    scanf("%d %d", &origem, &destino);
+    graph_add_edge(graph, origem, destino);
+  }
+
+  CV_Tarjan(graph, ap_data);
+
+  printf("%d\n", graph->nC);
+  for(i=1;i <= graph->nC; i++){
+    printf("%d ", worseThanSex[i]);
+  }
+  printf("\n");
+  printf("%d\n", ap_data[0]);
+  graph_free(graph);
+
+  return 0;
 }

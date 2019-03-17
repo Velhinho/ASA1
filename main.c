@@ -13,41 +13,42 @@
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) < (b) ? (b) : (a))
 
-typedef int  graph_vertex_t;
+typedef int  vertice_index;
 
-typedef struct _graph_node graph_node_t;
+typedef struct graph_node graph_node_t;
 
-typedef struct _graph      graph_t;
+typedef struct graph graph_struct;
 
-struct _graph_node {
-  graph_vertex_t vertex;
+struct graph_node {
+  vertice_index vertex;
   graph_node_t *next;
 };
 
-struct _graph {
+struct graph {
   int V, E, nC;
   graph_node_t **adjlist;
 };
 
 
 //HARDCODED. HAVE TO WORK ON THIS, OR MAYBE NOT!
+//tem este nome porque é dificil de encontrar, mais dificil que sexo, e isto é dito por um aluno do Técnico, LOL
 int worseThanSex[10];
 
 
-graph_t *graph_new(int V) {
-  graph_t *graph = NULL;
+graph_struct *initGraph(int V) {
+  graph_struct *graph = NULL;
   
-  if(V > 0 && (graph = (graph_t*)malloc(sizeof(struct _graph))) != NULL) {
+  if(V > 0 && (graph = (graph_struct*)malloc(sizeof(struct graph))) != NULL) {
     graph->V = V;
     graph->E = 0;
     graph->nC = 0;
-    graph->adjlist = (graph_node_t**)malloc(V * sizeof(struct _graph_node*));
+    graph->adjlist = (graph_node_t**)malloc(V * sizeof(struct graph_node*));
   }
   
   return graph;
 }
 
-void graph_free(graph_t *graph) {
+void graph_free(graph_struct *graph) {
   int i; 
   for(i = 0; i < graph->V; ++i) {
     graph_node_t *head = graph->adjlist[i];
@@ -61,10 +62,10 @@ void graph_free(graph_t *graph) {
   free(graph);
 }
 
-void graph_add_edge(graph_t *graph, graph_vertex_t u, graph_vertex_t v) {
+void graph_add_edge(graph_struct *graph, vertice_index u, vertice_index v) {
   if((u > 0 && u <= graph->V) && (v > 0 && v <= graph->V)) {
-    graph_node_t *w = (graph_node_t*)malloc(sizeof(struct _graph_node));
-    graph_node_t *x = (graph_node_t*)malloc(sizeof(struct _graph_node));
+    graph_node_t *w = (graph_node_t*)malloc(sizeof(struct graph_node));
+    graph_node_t *x = (graph_node_t*)malloc(sizeof(struct graph_node));
 
     if(w != NULL && x != NULL) {
       w->vertex = u;
@@ -84,9 +85,9 @@ void graph_add_edge(graph_t *graph, graph_vertex_t u, graph_vertex_t v) {
 }
 
 
-void DFS_Tarjan(graph_t *graph, graph_vertex_t u, int **lista, int ap_data[2]) {
+void DFS_Tarjan(graph_struct *graph, vertice_index u, int **lista, int ap_data[2]) {
   graph_node_t *node = graph->adjlist[u - 1];
-  graph_vertex_t adj;
+  vertice_index adj;
   bool isArticulationPoint = false;
   int childCount = 0;
   
@@ -131,7 +132,7 @@ void DFS_Tarjan(graph_t *graph, graph_vertex_t u, int **lista, int ap_data[2]) {
 }
 
 
-void CV_Tarjan(graph_t *graph, int ap_data[2]) {
+void CV_Tarjan(graph_struct *graph, int ap_data[2]) {
   int **lista, i;
 
   ap_data[AP_COUNT] = 0;
@@ -166,16 +167,18 @@ void CV_Tarjan(graph_t *graph, int ap_data[2]) {
   free(lista);
 }
 
+int compare(const void* a, const void* b){
+  return(*(int*)a - *(int*)b);
+}
+
 int main() {
   int V, E, i, origem, destino;
   int ap_data[3];
-  graph_t *graph;
+  graph_struct *graph;
   
   scanf("%d", &V);
   scanf("%d", &E);
-  graph = graph_new(V);
-
-  int list[V];
+  graph = initGraph(V);
 
   for(i=0;i<E;i++){
     scanf("%d %d", &origem, &destino);
@@ -185,9 +188,10 @@ int main() {
   CV_Tarjan(graph, ap_data);
 
   printf("%d\n", graph->nC);
-  for(i=1;i <= graph->nC; i++){
-    printf("%d ", worseThanSex[i]);
+  for(i=1;i<=graph->nC;i++){
+    printf("%d ", worseThanSex[i]); 
   }
+
   printf("\n");
   printf("%d\n", ap_data[0]);
   graph_free(graph);
